@@ -1,10 +1,15 @@
 var Delaunator = require('delaunator')
+var Simplex = require('perlin-simplex')
+var simplex = new Simplex()
 
-var SPEED = 0.20
-var N_POINTS = 550
+var SPEED = 0.5
+var N_POINTS = 500
 
-var width = window.innerWidth
-var height = window.innerHeight
+// var width = window.innerWidth
+// var height = window.innerHeight
+
+var width = 200
+var height = 200
 
 document.body.style.background = 'rgb(20, 20, 20)'
 
@@ -21,8 +26,16 @@ window.requestAnimationFrame(updateLoop)
 
 function updateLoop () {
   window.requestAnimationFrame(updateLoop)
-  points.forEach(function (point) {
-    var theta = (0.5 - Math.random()) * (Math.PI / 16)
+  points.forEach(function (point, i) {
+    // var theta = (0.5 - Math.random()) * (Math.PI / 16)
+    var x = point.x / 40
+    var y = point.y / 40
+    var z = Date.now() / 10000
+    // var s = simplex.noise3d(x, y, z)
+    var s = simplex.noise(x, y)
+    var theta1 = s * (2 * Math.PI)
+    var theta = (0.01 * theta1) + (0.99 * point.theta)
+    // if (i === 0) console.log(s, theta)
     point.move(theta, SPEED)
   })
   triangles.update(points)
@@ -70,7 +83,7 @@ function mod (a, n) {
 }
 
 function move (theta, r) {
-  this.theta += theta
+  this.theta = theta
   this.x += r * Math.cos(this.theta)
   this.y += r * Math.sin(this.theta)
 
