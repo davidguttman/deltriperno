@@ -5,11 +5,11 @@ var simplex = new Simplex()
 var SPEED = 0.5
 var N_POINTS = 500
 
-// var width = window.innerWidth
-// var height = window.innerHeight
+var width = 0.75 * window.innerWidth
+var height = 0.75 * window.innerHeight
 
-var width = 200
-var height = 200
+// var width = 200
+// var height = 200
 
 document.body.style.background = 'rgb(20, 20, 20)'
 
@@ -19,8 +19,13 @@ points.forEach(function (point) {
   // document.body.appendChild(point.el)
 })
 
+var parent = document.createElement('div')
+parent.style.position = 'absolute'
+parent.style.top = 0.125 * window.innerHeight + 'px'
+parent.style.left = 0.125 * window.innerWidth + 'px'
+document.body.appendChild(parent)
 var triangles = createTrianges(points)
-document.body.appendChild(triangles.el)
+parent.appendChild(triangles.el)
 
 window.requestAnimationFrame(updateLoop)
 
