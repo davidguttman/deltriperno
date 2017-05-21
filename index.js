@@ -3,13 +3,10 @@ var Simplex = require('perlin-simplex')
 var simplex = new Simplex()
 
 var SPEED = 0.5
-var N_POINTS = 500
+var N_POINTS = 200
 
 var width = 0.75 * window.innerWidth
 var height = 0.75 * window.innerHeight
-
-// var width = 200
-// var height = 200
 
 document.body.style.background = 'rgb(20, 20, 20)'
 
@@ -36,8 +33,8 @@ function updateLoop () {
     var x = point.x / 40
     var y = point.y / 40
     var z = Date.now() / 10000
-    // var s = simplex.noise3d(x, y, z)
-    var s = simplex.noise(x, y)
+    var s = simplex.noise3d(x, y, z)
+    // var s = simplex.noise(x, y)
     var theta1 = s * (2 * Math.PI)
     var theta = (0.01 * theta1) + (0.99 * point.theta)
     // if (i === 0) console.log(s, theta)
@@ -141,18 +138,10 @@ function createPathData (points) {
     y1 = coords[triangles[i + 1]][1]
     x2 = coords[triangles[i + 2]][0]
     y2 = coords[triangles[i + 2]][1]
-    pathData.push('M')
-    pathData.push(x0)
-    pathData.push(y0)
-    pathData.push('L')
-    pathData.push(x1)
-    pathData.push(y1)
-    pathData.push('L')
-    pathData.push(x2)
-    pathData.push(y2)
-    pathData.push('L')
-    pathData.push(x0)
-    pathData.push(y0)
+    pathData.push(['M', x0, y0].join(' '))
+    pathData.push(['L', x1, y1].join(' '))
+    pathData.push(['L', x2, y2].join(' '))
+    pathData.push(['L', x0, y0].join(' '))
   }
 
   return pathData.join(' ')
