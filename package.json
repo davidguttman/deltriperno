@@ -1,0 +1,19 @@
+{
+  "name": "triangles",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "budo index.js --live"
+  },
+  "keywords": [],
+  "author": "David Guttman <david@guttman.io> (http://davidguttman.com/)",
+  "license": "MIT",
+  "dependencies": {
+    "delaunator": "^1.0.2"
+  },
+  "devDependencies": {
+    "budo": "^10.0.3",
+    "standard": "^10.0.2"
+  }
+}
