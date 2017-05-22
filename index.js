@@ -1,9 +1,11 @@
-var Delaunator = require('delaunator')
 var Simplex = require('perlin-simplex')
+var Delaunator = require('delaunator')
+var getDistance = require('euclidean-distance')
+
 var simplex = new Simplex()
 
-var SPEED = 0.5
-var N_POINTS = 200
+var SPEED = 2.75
+var N_POINTS = 120
 
 var width = 0.75 * window.innerWidth
 var height = 0.75 * window.innerHeight
@@ -26,7 +28,13 @@ parent.appendChild(triangles.el)
 
 window.requestAnimationFrame(updateLoop)
 
+var fps = 0
+setInterval(function () {
+  console.log('fps', fps)
+  fps = 0
+}, 1000)
 function updateLoop () {
+  fps += 1
   window.requestAnimationFrame(updateLoop)
   points.forEach(function (point, i) {
     // var theta = (0.5 - Math.random()) * (Math.PI / 16)
@@ -109,14 +117,14 @@ function createTrianges (points) {
       viewBox='${viewBox}'
       width=${width}
       height=${height}
-      stroke='${stroke}'
-      fill='${fill}'>
-      <path d='${pathData}' />
+      stroke='none'
+      fill='none'>
+      ${pathData}
     </svg>
   `
   return {
     el: parent,
-    path: parent.querySelector('path'),
+    svg: parent.querySelector('svg'),
     update: update
   }
 }
@@ -130,7 +138,9 @@ function createPathData (points) {
 
   var pathData = []
 
-  var x0, y0, x1, y1, x2, y2
+  var maxArea = 2 * (height * width) / (N_POINTS / 3)
+
+  var x0, y0, x1, y1, x2, y2, d, fill, b, eq
   for (var i = 0; i < triangles.length; i += 3) {
     x0 = coords[triangles[i]][0]
     y0 = coords[triangles[i]][1]
@@ -138,15 +148,38 @@ function createPathData (points) {
     y1 = coords[triangles[i + 1]][1]
     x2 = coords[triangles[i + 2]][0]
     y2 = coords[triangles[i + 2]][1]
-    pathData.push(['M', x0, y0].join(' '))
-    pathData.push(['L', x1, y1].join(' '))
-    pathData.push(['L', x2, y2].join(' '))
-    pathData.push(['L', x0, y0].join(' '))
+
+    d = [
+      'M', x0, y0,
+      'L', x1, y1,
+      'L', x2, y2,
+      'L', x0, y0
+    ].join(' ')
+
+    // area = calcArea(x0, y0, x1, y1, x2, y2)
+    eq = equalness(x0, y0, x1, y1, x2, y2)
+
+    // b = Math.floor((area / maxArea) * 255)
+    b = Math.floor(20 + (eq * 150))
+    fill = `rgb(${b}, ${b}, ${b})`
+    pathData.push(`<path d='${d}' fill='${fill}' stroke='${fill}' />`)
   }
 
-  return pathData.join(' ')
+  return pathData.join('\n')
 }
 
 function update (points) {
-  this.path.setAttribute('d', createPathData(points))
+  this.svg.innerHTML = createPathData(points)
+}
+
+function calcArea (x0, y0, x1, y1, x2, y2) {
+  return Math.abs(((x0 * (y1 - y2)) + (x1 * (y2 - y0)) + (x2 * (y0 - y1))) / 2)
+}
+
+function equalness (x0, y0, x1, y1, x2, y2) {
+  var a = getDistance([x0, y0], [x1, y1])
+  var b = getDistance([x0, y0], [x2, y2])
+  var c = getDistance([x2, y2], [x1, y1])
+  var diff = Math.abs(a - b) + Math.abs(a - c) + Math.abs(b - c)
+  return 1 - (diff / (a + b + c))
 }
