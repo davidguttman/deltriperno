@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "budo index.js --live"
+    "dev": "budo index.js --live",
+    "build": "browserify index.js | uglifyjs -mc > public/bundle.js",
+    "deploy": "npm run build && surge public"
   },
   "keywords": [],
   "author": "David Guttman <david@guttman.io> (http://davidguttman.com/)",
@@ -16,6 +18,8 @@
   },
   "devDependencies": {
     "budo": "^10.0.3",
-    "standard": "^10.0.2"
+    "standard": "^10.0.2",
+    "surge": "^0.19.0",
+    "uglify-es": "^3.0.10"
   }
 }

@@ -40,9 +40,9 @@ function createPoints (n) {
 }
 
 function updatePoint () {
-  var nx = this.x * 10
+  var nx = this.x * 5
   var ny = this.y * 10
-  var nz = Date.now() / 10000
+  var nz = Date.now() / 1000
   var s = simplex.noise3d(nx, ny, nz)
 
   var theta = s * 2 * Math.PI
@@ -119,8 +119,9 @@ function createTrianglePath (pa, pb, pc) {
   ].join(' ')
 
   var eq = equalness(x0, y0, x1, y1, x2, y2)
+  eq = eq * eq
 
-  var b = Math.floor(20 + (eq * 150))
+  var b = Math.floor(30 + (eq * 130))
   var fill = `rgb(${b}, ${b}, ${b})`
   return `<path d='${d}' fill='${fill}' stroke='none' />`
 }
