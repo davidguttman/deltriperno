@@ -1,11 +1,12 @@
+var query = require('querystring').parse(window.location.search.slice(1))
 var Simplex = require('perlin-simplex')
 var Delaunator = require('delaunator')
 var getDistance = require('euclidean-distance')
 
 var simplex = new Simplex()
 
-var SPEED = 0.001
-var N_POINTS = 200
+var SPEED = query.speed ? query.speed / 1000 : 0.001
+var N_POINTS = query.points ? parseFloat(query.points) : 200
 
 document.body.style.background = 'rgb(20, 20, 20)'
 
