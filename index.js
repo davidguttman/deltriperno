@@ -57,21 +57,19 @@ function updatePoint () {
 }
 
 function createTrianges (points) {
+  var ns = 'http://www.w3.org/2000/svg'
   var viewBox = [0, 0, 1, 1].join(' ')
-
-  var pathData = createPathData(points)
 
   var parent = document.createElement('div')
   parent.style.width = '100%'
   parent.style.height = '100%'
   parent.innerHTML = `
-    <svg xmlns='http://www.w3.org/svg/2000'
+    <svg xmlns='${ns}'
       viewBox='${viewBox}'
       width='100%'
       height='100%'
       stroke='none'
       fill='none'>
-      ${pathData}
     </svg>
   `
 
@@ -80,7 +78,22 @@ function createTrianges (points) {
   return {
     el: parent,
     update: function (points) {
-      svg.innerHTML = createPathData(points)
+      var paths = createPathData(points)
+      paths.forEach(function (p, i) {
+        var child = svg.children[i]
+        if (!child) {
+          child = document.createElementNS(ns, 'path')
+          child.setAttributeNS(null, 'stroke', 'none')
+          svg.appendChild(child)
+        }
+
+        child.setAttributeNS(null, 'd', p[0])
+        child.setAttributeNS(null, 'fill', p[1])
+      })
+
+      for (var i = (paths.length - 1); i < svg.children.length; i++) {
+        svg.children[i].setAttributeNS(null, 'fill', 'rgba(0,0,0,0)')
+      }
     }
   }
 }
@@ -101,7 +114,7 @@ function createPathData (points) {
     ))
   }
 
-  return pathData.join('\n')
+  return pathData
 }
 
 function createTrianglePath (pa, pb, pc) {
@@ -124,7 +137,8 @@ function createTrianglePath (pa, pb, pc) {
 
   var b = Math.floor(30 + (eq * 130))
   var fill = `rgb(${b}, ${b}, ${b})`
-  return `<path d='${d}' fill='${fill}' stroke='none' />`
+  return [d, fill]
+  // return `<path d='${d}' fill='${fill}' stroke='none' />`
 }
 
 function equalness (x0, y0, x1, y1, x2, y2) {
