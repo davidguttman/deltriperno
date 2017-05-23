@@ -7,6 +7,8 @@ var simplex = new Simplex()
 
 var SPEED = query.speed ? query.speed / 1000 : 0.001
 var N_POINTS = query.points ? parseFloat(query.points) : 200
+var HUE = query.hue || 0
+var SAT = query.saturation || 0
 
 document.body.style.background = 'rgb(20, 20, 20)'
 
@@ -91,7 +93,7 @@ function createTrianges (points) {
         child.setAttributeNS(null, 'fill', p[1])
       })
 
-      for (var i = (paths.length - 1); i < svg.children.length; i++) {
+      for (var i = paths.length; i < svg.children.length; i++) {
         svg.children[i].setAttributeNS(null, 'fill', 'rgba(0,0,0,0)')
       }
     }
@@ -135,8 +137,9 @@ function createTrianglePath (pa, pb, pc) {
   var eq = equalness(x0, y0, x1, y1, x2, y2)
   eq = eq * eq
 
-  var b = Math.floor(30 + (eq * 130))
-  var fill = `rgb(${b}, ${b}, ${b})`
+  var b = Math.floor(30 + (eq * 70))
+  var fill = `hsl(${HUE}, ${SAT}%, ${b}%)`
+
   return [d, fill]
   // return `<path d='${d}' fill='${fill}' stroke='none' />`
 }
